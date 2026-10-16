@@ -75,17 +75,20 @@ window.addEventListener('load', () => {
   const map = L.map(el, { scrollWheelZoom: false, dragging: !L.Browser.mobile, tap: false, attributionControl: true });
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 12, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
   const area = [
+    [38.3566,-121.9877], // Vacaville (north-west)
     [38.4088,-121.3716], // Elk Grove (north)
     [38.20,-120.85],     // foothills
+    [37.9841,-120.3822], // Sonora (east)
     [37.4849,-119.9663], // Mariposa (east)
     [36.9613,-120.0607], // Madera (south)
     [37.0058,-121.5683], // Gilroy
     [37.3382,-121.8863], // San Jose
     [37.5485,-121.9886], // Fremont
-    [37.7249,-122.1561], // San Leandro (west)
-    [38.02,-121.70]      // Delta
+    [37.7249,-122.1561], // San Leandro
+    [37.9358,-122.3477], // Richmond (west)
+    [38.1041,-122.2566]  // Vallejo
   ];
-  const zone = L.polygon(area, { color: '#C8102E', weight: 2, fillColor: '#C8102E', fillOpacity: 0.18 }).addTo(map);
+  const zone = L.polygon(area, { color: '#0066b3', weight: 2, fillColor: '#0066b3', fillOpacity: 0.18 }).addTo(map);
   L.circleMarker([37.4947,-120.8466], { radius: 7, color: '#111', weight: 2, fillColor: '#fff', fillOpacity: 1 }).addTo(map).bindTooltip('Turlock', { permanent: true, direction: 'top', offset: [0,-6] });
   map.fitBounds(zone.getBounds(), { padding: [12, 12] });
 });
