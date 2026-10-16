@@ -2,7 +2,7 @@
 const form = document.querySelector('#service-form');
 const fields = document.querySelector('#fields');
 let mode = 'personal';
-const services = ['Oil change', 'Brakes', 'Battery', 'Diagnostics / check engine light', 'Tires', 'Other'];
+const services = ['Oil change', 'Brakes', 'Battery', 'Diagnostics / check engine light', 'Recall', 'Other'];
 function field(id, label, type = 'text', required = false, attrs = '') {
   return `<div class="field"><label for="${id}">${label}${required ? ' *' : ''}</label><input id="${id}" name="${id}" type="${type}" ${required ? 'required' : ''} ${attrs} aria-describedby="${id}-error"><p class="error" id="${id}-error" hidden></p></div>`;
 }
@@ -20,7 +20,6 @@ function render() {
   const scheduling = fleet ? select('frequency', 'How often', ['One-time', 'Weekly', 'Monthly', 'Not sure'], true) + field('days', 'Preferred days', 'text', false, 'placeholder="e.g., Mondays and Wednesdays"') : field('date', 'Preferred date', 'date') + select('window', 'Preferred time window', ['Morning', 'Midday', 'Afternoon']);
   fields.innerHTML = section('01 / YOUR DETAILS', contact + field('phone', 'Phone', 'tel', true, 'autocomplete="tel"') + field('email', 'Email', 'email', true, 'autocomplete="email"')) + section('02 / LOCATION & VEHICLE', location + vehicle) + section('03 / SERVICE & TIMING', service + scheduling + '<div class="field"><label for="notes">Notes</label><textarea id="notes" name="notes" placeholder="Anything else we should know?"></textarea></div>');
   document.querySelector('#other').disabled = true;
-  document.querySelector('#zip-note').hidden = true;
   document.querySelector('#error-summary').hidden = true;
   document.querySelector('#consent-error').hidden = true;
   document.querySelector('#consent').removeAttribute('aria-invalid');
@@ -53,7 +52,6 @@ form.addEventListener('change', e => {
   if (e.target.name === 'services' && !document.querySelector('#services-error').hidden) serviceValidation();
 });
 form.addEventListener('input', e => {
-  if (e.target.id === 'zip') { const zip = e.target.value; const local = ['95380','95382','95307','95316','95324','95326','95328','95363']; const nearby = /^9535[0-8]$/.test(zip); document.querySelector('#zip-note').hidden = !/^\d{5}$/.test(zip) || local.includes(zip) || nearby; }
   if (e.target.getAttribute('aria-invalid') === 'true' && e.target.name !== 'services') validate(e.target);
 });
 form.addEventListener('submit', e => {
@@ -69,3 +67,25 @@ form.addEventListener('submit', e => {
 document.querySelector('.restart').addEventListener('click', () => { document.querySelector('#confirmation').hidden = true; document.querySelector('#request-content').hidden = false; render(); document.querySelector(`#${mode}-toggle`).focus(); });
 document.querySelector('#privacy-link').addEventListener('click', e => { e.preventDefault(); document.querySelector('#privacy').hidden = !document.querySelector('#privacy').hidden; });
 render();
+
+// Service-area map (Leaflet + OpenStreetMap tiles). Polygon = his stated limits.
+window.addEventListener('load', () => {
+  if (!window.L) return;
+  const el = document.querySelector('#service-map'); if (!el) return;
+  const map = L.map(el, { scrollWheelZoom: false, dragging: !L.Browser.mobile, tap: false, attributionControl: true });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 12, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+  const area = [
+    [38.4088,-121.3716], // Elk Grove (north)
+    [38.20,-120.85],     // foothills
+    [37.4849,-119.9663], // Mariposa (east)
+    [36.9613,-120.0607], // Madera (south)
+    [37.0058,-121.5683], // Gilroy
+    [37.3382,-121.8863], // San Jose
+    [37.5485,-121.9886], // Fremont
+    [37.7249,-122.1561], // San Leandro (west)
+    [38.02,-121.70]      // Delta
+  ];
+  const zone = L.polygon(area, { color: '#C8102E', weight: 2, fillColor: '#C8102E', fillOpacity: 0.18 }).addTo(map);
+  L.circleMarker([37.4947,-120.8466], { radius: 7, color: '#111', weight: 2, fillColor: '#fff', fillOpacity: 1 }).addTo(map).bindTooltip('Turlock', { permanent: true, direction: 'top', offset: [0,-6] });
+  map.fitBounds(zone.getBounds(), { padding: [12, 12] });
+});
