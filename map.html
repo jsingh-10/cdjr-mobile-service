@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Mobile Service Area | Turlock Chrysler Dodge Jeep Ram</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+html,body{margin:0;height:100%;font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+#map{position:absolute;inset:0}
+.key{background:#fff;padding:8px 10px;border-radius:4px;box-shadow:0 1px 4px #0003;line-height:1.6}
+.key i{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-1px;border-radius:2px}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+</head><body>
+<div id="map" role="img" aria-label="Mobile service area map. Home and personal vehicles: within about 40 miles of Turlock. Fleets and businesses: wider area."></div>
+<script>
+// Store: 1600 Auto Mall Dr, Turlock. Personal radius = straight-line miles from the store
+// to the midpoint between Merced and Madera (37.13175, -120.27185) = 40.3 mi.
+var STORE=[37.4947,-120.8466], MILES=40.3, METERS=MILES*1609.344;
+var map=L.map('map',{scrollWheelZoom:false,dragging:!L.Browser.mobile,tap:false});
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:12,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+var fleet=L.polygon([[38.3566,-121.9877],[38.4088,-121.3716],[38.20,-120.85],[37.9841,-120.3822],[37.4849,-119.9663],[36.9613,-120.0607],[37.0058,-121.5683],[37.3382,-121.8863],[37.5485,-121.9886],[37.7249,-122.1561],[37.9358,-122.3477],[38.1041,-122.2566]],{color:'#0066b3',weight:1.5,dashArray:'6 6',fillColor:'#0066b3',fillOpacity:.06}).addTo(map);
+var home=L.circle(STORE,{radius:METERS,color:'#0066b3',weight:2.5,fillColor:'#0066b3',fillOpacity:.22}).addTo(map);
+L.circleMarker(STORE,{radius:7,color:'#111',weight:2,fillColor:'#fff',fillOpacity:1}).addTo(map).bindTooltip('Turlock CDJR',{permanent:true,direction:'top',offset:[0,-6]});
+var key=L.control({position:'bottomleft'});
+key.onAdd=function(){var d=L.DomUtil.create('div','key');d.innerHTML='<div><i style="background:#0066b3;opacity:.5"></i>Home &amp; personal: about 40 miles</div><div><i style="border:1.5px dashed #0066b3;background:#0066b30f"></i>Fleets &amp; businesses</div>';return d;};
+key.addTo(map);
+map.fitBounds(home.getBounds(),{padding:[10,10]});
+</script>
+</body></html>
