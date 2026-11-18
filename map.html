@@ -17,7 +17,7 @@ html,body{margin:0;height:100%;font:13px/1.4 -apple-system,BlinkMacSystemFont,"S
 // Store: 1600 Auto Mall Dr, Turlock. Personal radius = straight-line miles from the store
 // to the midpoint between Merced and Madera (37.13175, -120.27185) = 40.3 mi.
 var STORE=[37.4947,-120.8466], MILES=40.3, METERS=MILES*1609.344;
-var map=L.map('map',{scrollWheelZoom:false,dragging:!L.Browser.mobile,tap:false});
+var map=L.map('map',{scrollWheelZoom:false,dragging:!L.Browser.mobile,tap:false}).setView(STORE,8);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:12,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
 var fleet=L.polygon([[38.3566,-121.9877],[38.4088,-121.3716],[38.20,-120.85],[37.9841,-120.3822],[37.4849,-119.9663],[36.9613,-120.0607],[37.0058,-121.5683],[37.3382,-121.8863],[37.5485,-121.9886],[37.7249,-122.1561],[37.9358,-122.3477],[38.1041,-122.2566]],{color:'#0066b3',weight:1.5,dashArray:'6 6',fillColor:'#0066b3',fillOpacity:.06}).addTo(map);
 var home=L.circle(STORE,{radius:METERS,color:'#0066b3',weight:2.5,fillColor:'#0066b3',fillOpacity:.22}).addTo(map);
